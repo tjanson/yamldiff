@@ -18,8 +18,10 @@ var version = "latest"
 
 func main() {
 	var opts struct {
-		File1   string `long:"file1" description:"first YAML file" required:"true"`
-		File2   string `long:"file2" description:"second YAML file" required:"true"`
+		Positional struct {
+			File1 string
+			File2 string
+		} `positional-args:"yes" required:"yes"`
 		NoColor bool   `long:"no-color" description:"disable colored output" required:"false"`
 		Version func() `long:"version" description:"print version and exit"`
 	}
@@ -39,14 +41,14 @@ func main() {
 
 	formatter := newFormatter(opts.NoColor)
 
-	errors := stat(opts.File1, opts.File2)
+	errors := stat(opts.Positional.File1, opts.Positional.File2)
 	failOnErr(formatter, errors...)
 
-	yaml1, err := unmarshal(opts.File1)
+	yaml1, err := unmarshal(opts.Positional.File1)
 	if err != nil {
 		failOnErr(formatter, err)
 	}
-	yaml2, err := unmarshal(opts.File2)
+	yaml2, err := unmarshal(opts.Positional.File2)
 	if err != nil {
 		failOnErr(formatter, err)
 	}
